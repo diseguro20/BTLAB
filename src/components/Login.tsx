@@ -17,14 +17,14 @@ export const Login: React.FC = () => {
 
     try {
       if (isSignUp) {
-        const { error: signUpError } = await supabase.auth.signUp({
+        const { error: signUpError } = await supabase!.auth.signUp({
           email,
           password,
         });
         if (signUpError) throw signUpError;
         setMessage('Cadastro efetuado! Verifique seu e-mail para confirmação (se ativo) ou faça login.');
       } else {
-        const { error: signInError } = await supabase.auth.signInWithPassword({
+        const { error: signInError } = await supabase!.auth.signInWithPassword({
           email,
           password,
         });

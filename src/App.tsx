@@ -33,6 +33,11 @@ function App() {
 
   // 1. Session verification
   useEffect(() => {
+    if (!supabase) {
+      setLoadingSession(false);
+      return;
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoadingSession(false);
@@ -49,7 +54,7 @@ function App() {
 
   // 2. Initialize and subscribe to state updates when session is active
   useEffect(() => {
-    if (!session) {
+    if (!session || !supabase) {
       setBots([]);
       setLogs([]);
       return;
@@ -111,6 +116,59 @@ function App() {
             to { transform: rotate(360deg); }
           }
         `}</style>
+      </div>
+    );
+  }
+
+  // Render configuration error if Supabase credentials are not set in Vercel
+  if (!supabase) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        padding: '24px',
+        background: 'var(--bg-primary)',
+        backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(239, 68, 68, 0.15), transparent 60%)',
+      }}>
+        <div className="glass-panel" style={{
+          padding: '32px',
+          width: '100%',
+          maxWidth: '500px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px',
+          textAlign: 'center',
+          border: '1px solid rgba(239, 68, 68, 0.3)',
+        }}>
+          <span style={{ fontSize: '48px' }}>⚠️</span>
+          <h2 style={{ fontSize: '20px', fontWeight: '700', color: 'var(--danger)' }}>
+            Supabase Não Configurado
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: '1.6' }}>
+            O painel de controle BTMob V4 requer uma conexão ativa com o Supabase. As variáveis de ambiente <strong>VITE_SUPABASE_URL</strong> e <strong>VITE_SUPABASE_ANON_KEY</strong> estão ausentes ou incorretas no seu deploy da Vercel.
+          </p>
+          <div style={{
+            background: 'var(--bg-secondary)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '6px',
+            padding: '16px',
+            textAlign: 'left',
+            fontSize: '12px',
+            lineHeight: '1.6',
+            color: 'var(--text-secondary)'
+          }}>
+            <strong>Como resolver na Vercel:</strong><br />
+            1. Vá ao painel da **Vercel**.<br />
+            2. Selecione o seu projeto (**BTLAB**).<br />
+            3. Acesse **Settings** &rarr; **Environment Variables**.<br />
+            4. Adicione as variáveis:<br />
+            &nbsp;&nbsp;&bull; <code style={{ color: 'var(--accent-cyan)' }}>VITE_SUPABASE_URL</code>: <em>sua URL do Supabase</em><br />
+            &nbsp;&nbsp;&bull; <code style={{ color: 'var(--accent-cyan)' }}>VITE_SUPABASE_ANON_KEY</code>: <em>sua chave Anon pública</em><br />
+            5. Re-deploye o projeto na aba **Deployments** (Redeploy).
+          </div>
+        </div>
       </div>
     );
   }
@@ -177,7 +235,7 @@ function App() {
           </div>
           <button 
             className="btn btn-secondary" 
-            onClick={() => supabase.auth.signOut()}
+            onClick={() => supabase!.auth.signOut()}
             style={{ padding: '4px 10px', minHeight: '30px', fontSize: '12px' }}
           >
             Sair 🚪
