@@ -18,48 +18,69 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({ bot, onClose }) => {
   const [activeTab, setActiveTab] = useState<TabType>('screen');
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '24px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '16px' }}>
       
       {/* Bot Info Header */}
-      <div className="glass-panel" style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+      <div className="glass-panel" style={{ padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{ fontSize: '32px' }}>{bot.countryCode === 'BR' ? '🇧🇷' : '🇺🇸'}</span>
+          {/* Back button for mobile viewports */}
+          <button 
+            className="btn btn-secondary mobile-back-btn" 
+            onClick={onClose}
+            style={{ 
+              padding: '6px 10px', 
+              fontSize: '12px', 
+              minHeight: '32px'
+            }}
+          >
+            ← Voltar
+          </button>
+          
+          <span style={{ fontSize: '28px' }} className="device-flag">{bot.countryCode === 'BR' ? '🇧🇷' : '🇺🇸'}</span>
           <div>
-            <h2 style={{ fontSize: '20px', fontWeight: '700', color: 'var(--text-primary)' }}>{bot.name}</h2>
-            <div style={{ display: 'flex', gap: '12px', fontSize: '12px', color: 'var(--text-secondary)', marginTop: '4px', flexWrap: 'wrap' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-primary)' }}>{bot.name}</h2>
+            <div style={{ display: 'flex', gap: '10px', fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px', flexWrap: 'wrap' }}>
               <span>ID: <strong style={{ color: 'var(--accent-purple)' }}>{bot.id}</strong></span>
-              <span>•</span>
-              <span>Modelo: <strong>{bot.model}</strong></span>
               <span>•</span>
               <span>IP: <strong>{bot.ip}</strong></span>
               <span>•</span>
-              <span>Target: <strong style={{ color: 'var(--accent-cyan)' }}>{bot.tag}</strong></span>
+              <span>Tag: <strong style={{ color: 'var(--accent-cyan)' }}>{bot.tag}</strong></span>
             </div>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', fontSize: '12px', color: 'var(--text-secondary)' }}>
-            <span className={`badge ${bot.status === 'online' ? 'badge-online' : 'badge-offline'}`}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', fontSize: '11px', color: 'var(--text-secondary)' }}>
+            <span className={`badge ${bot.status === 'online' ? 'badge-online' : 'badge-offline'}`} style={{ padding: '1px 6px', fontSize: '9px' }}>
               {bot.status}
             </span>
-            <span style={{ marginTop: '4px' }}>Bateria: {bot.battery}% {bot.batteryCharging ? '⚡' : ''}</span>
+            <span style={{ marginTop: '2px' }}>🔋 {bot.battery}% {bot.batteryCharging ? '⚡' : ''}</span>
           </div>
-          <button className="btn btn-secondary" onClick={onClose} style={{ padding: '8px 12px', fontSize: '13px' }}>
+          <button className="btn btn-secondary desktop-close-btn" onClick={onClose} style={{ padding: '8px 12px', fontSize: '13px' }}>
             ✕ Fechar
           </button>
         </div>
       </div>
 
       {/* Tabs navigation bar */}
-      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid var(--border-color)', paddingBottom: '2px', overflowX: 'auto' }}>
+      <div 
+        className="tabs-scroll" 
+        style={{ 
+          display: 'flex', 
+          gap: '4px', 
+          borderBottom: '1px solid var(--border-color)', 
+          paddingBottom: '2px', 
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch'
+        }}
+      >
         {[
-          { id: 'screen', label: '📺 Live Screen', color: 'var(--accent-purple)' },
+          { id: 'screen', label: '📺 Tela', color: 'var(--accent-purple)' },
           { id: 'keylogger', label: '⌨️ Keylogger', color: 'var(--accent-pink)' },
           { id: 'files', label: '📁 Arquivos', color: 'var(--accent-cyan)' },
-          { id: 'apps', label: '📱 Aplicativos', color: 'var(--success)' },
-          { id: 'sms', label: '💬 SMS & Chamadas', color: 'var(--warning)' },
-          { id: 'terminal', label: '💻 Terminal Shell', color: 'white' }
+          { id: 'apps', label: '📱 Apps', color: 'var(--success)' },
+          { id: 'sms', label: '💬 SMS/Call', color: 'var(--warning)' },
+          { id: 'terminal', label: '💻 Shell', color: 'white' }
         ].map(tab => {
           const isActive = activeTab === tab.id;
           return (
@@ -71,13 +92,15 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({ bot, onClose }) => {
                 border: 'none',
                 borderBottom: isActive ? `2px solid ${tab.color}` : '2px solid transparent',
                 color: isActive ? 'white' : 'var(--text-secondary)',
-                padding: '10px 16px',
-                fontSize: '14px',
+                padding: '10px 14px',
+                fontSize: '13px',
                 fontWeight: '500',
                 borderRadius: '6px 6px 0 0',
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.2s ease',
+                minHeight: 'auto',
+                flexShrink: 0
               }}
             >
               {tab.label}
@@ -87,7 +110,7 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({ bot, onClose }) => {
       </div>
 
       {/* Tab content renderer */}
-      <div className="glass-panel" style={{ background: 'var(--bg-secondary)', minHeight: '450px', borderRadius: '0 0 12px 12px' }}>
+      <div className="glass-panel" style={{ background: 'var(--bg-secondary)', minHeight: '400px', borderRadius: '0 0 12px 12px' }}>
         {activeTab === 'screen' && <LiveScreen bot={bot} />}
         {activeTab === 'files' && <FileManager bot={bot} />}
         {activeTab === 'keylogger' && <Keylogger bot={bot} />}
@@ -96,6 +119,25 @@ export const ActionPanel: React.FC<ActionPanelProps> = ({ bot, onClose }) => {
         {activeTab === 'terminal' && <Terminal bot={bot} />}
       </div>
 
+      <style>{`
+        /* Hide scrollbars on tab lists */
+        .tabs-scroll::-webkit-scrollbar {
+          display: none;
+        }
+        .tabs-scroll {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        
+        /* Show/hide close buttons based on viewport */
+        .mobile-back-btn { display: inline-flex !important; }
+        .desktop-close-btn { display: none !important; }
+        
+        @media (min-width: 1024px) {
+          .mobile-back-btn { display: none !important; }
+          .desktop-close-btn { display: inline-flex !important; }
+        }
+      `}</style>
     </div>
   );
 };

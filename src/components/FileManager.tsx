@@ -36,62 +36,62 @@ export const FileManager: React.FC<FileManagerProps> = ({ bot }) => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '16px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '16px' }}>
       
       {/* Path Breadcrumb and Navigation actions */}
-      <div className="glass-panel" style={{ padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <div className="glass-panel" style={{ padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           <button 
             className="btn btn-secondary" 
             onClick={handleBack} 
             disabled={currentPath === '/storage/emulated/0'}
-            style={{ padding: '6px 12px', fontSize: '13px', opacity: currentPath === '/storage/emulated/0' ? 0.5 : 1 }}
+            style={{ padding: '4px 10px', fontSize: '12px', minHeight: '30px', opacity: currentPath === '/storage/emulated/0' ? 0.5 : 1 }}
           >
             ← Voltar
           </button>
-          <span style={{ fontSize: '14px', fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)' }}>
+          <span style={{ fontSize: '13px', fontFamily: 'var(--font-mono)', color: 'var(--accent-cyan)', wordBreak: 'break-all' }}>
             {currentPath}
           </span>
         </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '6px' }}>
           <button 
             className="btn btn-secondary" 
             onClick={() => {
-              StorageService.addLog('info', `Simulação de upload de arquivo iniciada.`, bot.id);
-              alert("Selecione um arquivo local para enviar ao dispositivo...");
+              StorageService.addLog('info', `Simulação de upload iniciada.`, bot.id);
+              alert("Selecione um arquivo local para enviar...");
             }}
-            style={{ padding: '6px 12px', fontSize: '13px' }}
+            style={{ padding: '4px 10px', fontSize: '12px', minHeight: '30px' }}
           >
-            📤 Enviar Arquivo
+            📤 Enviar
           </button>
           <button 
             className="btn btn-secondary" 
             onClick={() => {
-              const name = prompt("Digite o nome da nova pasta:");
+              const name = prompt("Nome da nova pasta:");
               if (name) {
-                StorageService.addLog('info', `Nova pasta criada: ${name}`, bot.id);
-                alert(`Pasta "${name}" criada com sucesso.`);
+                StorageService.addLog('info', `Criou pasta: ${name}`, bot.id);
+                alert(`Pasta "${name}" criada.`);
               }
             }}
-            style={{ padding: '6px 12px', fontSize: '13px' }}
+            style={{ padding: '4px 10px', fontSize: '12px', minHeight: '30px' }}
           >
             📁 Nova Pasta
           </button>
         </div>
       </div>
 
-      {/* Main Files Table */}
-      <div className="glass-panel" style={{ padding: '20px', display: 'grid', gridTemplateColumns: '1fr 280px', gap: '20px' }}>
+      {/* Main Files Layout Grid */}
+      <div className="glass-panel file-manager-grid" style={{ padding: '16px', display: 'grid', gridTemplateColumns: '1fr 260px', gap: '16px' }}>
         
-        {/* Files list */}
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
+        {/* Table View (for Desktop) */}
+        <div className="desktop-table-view" style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}>
-                <th style={{ padding: '12px 8px' }}>Nome</th>
-                <th style={{ padding: '12px 8px' }}>Tamanho</th>
-                <th style={{ padding: '12px 8px' }}>Modificado</th>
-                <th style={{ padding: '12px 8px', textAlign: 'right' }}>Ações</th>
+                <th style={{ padding: '10px 6px' }}>Nome</th>
+                <th style={{ padding: '10px 6px' }}>Tamanho</th>
+                <th style={{ padding: '10px 6px' }}>Modificado</th>
+                <th style={{ padding: '10px 6px', textAlign: 'right' }}>Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -105,15 +105,9 @@ export const FileManager: React.FC<FileManagerProps> = ({ bot }) => {
                     cursor: 'pointer',
                     transition: 'background 0.2s ease'
                   }}
-                  onMouseEnter={(e) => {
-                    if (selectedFile?.name !== file.name) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.01)';
-                  }}
-                  onMouseLeave={(e) => {
-                    if (selectedFile?.name !== file.name) e.currentTarget.style.background = 'transparent';
-                  }}
                 >
-                  <td style={{ padding: '12px 8px', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '500' }}>
-                    <span style={{ fontSize: '16px' }}>{file.isDir ? '📁' : '📄'}</span>
+                  <td style={{ padding: '10px 6px', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '500' }}>
+                    <span style={{ fontSize: '14px' }}>{file.isDir ? '📁' : '📄'}</span>
                     {file.isDir ? (
                       <span 
                         style={{ color: 'var(--accent-purple)', textDecoration: 'underline' }}
@@ -128,20 +122,20 @@ export const FileManager: React.FC<FileManagerProps> = ({ bot }) => {
                       <span>{file.name}</span>
                     )}
                   </td>
-                  <td style={{ padding: '12px 8px', color: 'var(--text-secondary)' }}>
+                  <td style={{ padding: '10px 6px', color: 'var(--text-secondary)' }}>
                     {file.isDir ? '--' : `${(file.size / 1024).toFixed(1)} KB`}
                   </td>
-                  <td style={{ padding: '12px 8px', color: 'var(--text-muted)' }}>
+                  <td style={{ padding: '10px 6px', color: 'var(--text-muted)' }}>
                     {file.modified}
                   </td>
-                  <td style={{ padding: '12px 8px', textAlign: 'right' }}>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '6px' }} onClick={(e) => e.stopPropagation()}>
+                  <td style={{ padding: '10px 6px', textAlign: 'right' }}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '4px' }} onClick={(e) => e.stopPropagation()}>
                       {!file.isDir && (
-                        <button className="btn btn-secondary" onClick={() => handleDownload(file)} style={{ padding: '4px 8px', fontSize: '12px' }}>
+                        <button className="btn btn-secondary" onClick={() => handleDownload(file)} style={{ padding: '2px 6px', fontSize: '11px', minHeight: '26px' }}>
                           ⬇️
                         </button>
                       )}
-                      <button className="btn btn-secondary" onClick={() => handleDelete(file)} style={{ padding: '4px 8px', fontSize: '12px', color: 'var(--danger)' }}>
+                      <button className="btn btn-secondary" onClick={() => handleDelete(file)} style={{ padding: '2px 6px', fontSize: '11px', color: 'var(--danger)', minHeight: '26px' }}>
                         🗑️
                       </button>
                     </div>
@@ -152,32 +146,76 @@ export const FileManager: React.FC<FileManagerProps> = ({ bot }) => {
           </table>
         </div>
 
+        {/* Card View (for Mobile viewport < 768px) */}
+        <div className="mobile-card-grid">
+          {files.map(file => (
+            <div 
+              key={file.name}
+              className="mobile-card"
+              onClick={() => setSelectedFile(file)}
+              style={{
+                borderColor: selectedFile?.name === file.name ? 'var(--accent-purple)' : 'var(--border-color)',
+                background: selectedFile?.name === file.name ? 'var(--panel-hover)' : 'var(--bg-secondary)',
+                padding: '12px'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ fontSize: '20px' }}>{file.isDir ? '📁' : '📄'}</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  {file.isDir ? (
+                    <span 
+                      style={{ color: 'var(--accent-purple)', textDecoration: 'underline', fontWeight: '600', fontSize: '14px' }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNavigate(`${currentPath}/${file.name}`);
+                      }}
+                    >
+                      {file.name}
+                    </span>
+                  ) : (
+                    <span style={{ fontWeight: '500', fontSize: '14px', color: 'var(--text-primary)' }}>{file.name}</span>
+                  )}
+                  <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+                    {file.isDir ? 'Diretório' : `${(file.size / 1024).toFixed(1)} KB`} • {file.modified}
+                  </span>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end', marginTop: '6px' }} onClick={(e) => e.stopPropagation()}>
+                {!file.isDir && (
+                  <button className="btn btn-secondary" onClick={() => handleDownload(file)} style={{ padding: '4px 8px', fontSize: '11px', minHeight: '28px' }}>
+                    ⬇️ Download
+                  </button>
+                )}
+                <button className="btn btn-secondary" onClick={() => handleDelete(file)} style={{ padding: '4px 8px', fontSize: '11px', color: 'var(--danger)', minHeight: '28px' }}>
+                  🗑️ Deletar
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
         {/* Sidebar file info panel */}
-        <div style={{ borderLeft: '1px solid var(--border-color)', paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <h4 style={{ fontSize: '16px', fontWeight: '600' }}>Detalhes do Arquivo</h4>
+        <div className="file-info-sidebar" style={{ borderLeft: '1px solid var(--border-color)', paddingLeft: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <h4 style={{ fontSize: '14px', fontWeight: '600' }}>Detalhes do Arquivo</h4>
           {selectedFile ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '13px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '12px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Nome:</span>
                 <span style={{ fontWeight: '500', color: 'var(--text-primary)', wordBreak: 'break-all' }}>{selectedFile.name}</span>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <span style={{ color: 'var(--text-muted)' }}>Caminho Completo:</span>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span style={{ color: 'var(--text-muted)' }}>Caminho:</span>
                 <span style={{ fontFamily: 'var(--font-mono)', wordBreak: 'break-all', color: 'var(--accent-cyan)' }}>{selectedFile.path}</span>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Tamanho:</span>
-                <span>{selectedFile.isDir ? 'Diretório de arquivos' : `${(selectedFile.size / 1024).toFixed(1)} KB (${selectedFile.size} bytes)`}</span>
+                <span>{selectedFile.isDir ? 'Diretório' : `${(selectedFile.size / 1024).toFixed(1)} KB`}</span>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <span style={{ color: 'var(--text-muted)' }}>Última Modificação:</span>
-                <span>{selectedFile.modified}</span>
-              </div>
-
+              
               {/* Text preview simulation */}
               {!selectedFile.isDir && selectedFile.name.endsWith('.txt') && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '8px' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>Prévia do Conteúdo:</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '6px' }}>
+                  <span style={{ color: 'var(--text-muted)' }}>Prévia:</span>
                   <pre style={{ 
                     background: 'var(--bg-primary)', 
                     border: '1px solid var(--border-color)',
@@ -186,7 +224,9 @@ export const FileManager: React.FC<FileManagerProps> = ({ bot }) => {
                     fontSize: '11px', 
                     whiteSpace: 'pre-wrap',
                     fontFamily: 'var(--font-mono)',
-                    color: 'var(--success)'
+                    color: 'var(--success)',
+                    maxHeight: '120px',
+                    overflowY: 'auto'
                   }}>
                     bradesco: ag 3120 c/c 014522-8 psw: 481903&#10;gmail: carder123@gmail.com psw: 12345678&#10;itau: ag 0455 conta 98223 psw: 9912
                   </pre>
@@ -194,12 +234,30 @@ export const FileManager: React.FC<FileManagerProps> = ({ bot }) => {
               )}
             </div>
           ) : (
-            <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>Selecione um arquivo ou pasta para inspecionar os metadados.</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '12px' }}>Selecione um arquivo para ver detalhes.</p>
           )}
         </div>
 
       </div>
 
+      <style>{`
+        @media (max-width: 1024px) {
+          .file-manager-grid {
+            grid-template-columns: 1fr !important;
+          }
+          .file-info-sidebar {
+            border-left: none !important;
+            border-top: 1px solid var(--border-color) !important;
+            padding-left: 0 !important;
+            padding-top: 16px !important;
+            margin-top: 8px;
+          }
+        }
+        
+        @media (min-width: 769px) {
+          .desktop-table-view { display: block !important; }
+        }
+      `}</style>
     </div>
   );
 };

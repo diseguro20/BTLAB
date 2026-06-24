@@ -8,7 +8,7 @@
   --bg-primary: #09090e;
   --bg-secondary: #12121c;
   --bg-tertiary: #191928;
-  --panel-bg: rgba(18, 18, 28, 0.7);
+  --panel-bg: rgba(18, 18, 28, 0.8);
   --panel-hover: rgba(139, 92, 246, 0.08);
 
   --accent-cyan: #06b6d4;
@@ -77,6 +77,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
 }
 
 /* Glassmorphism Panel */
@@ -104,6 +105,11 @@ button, .btn {
   transition: all 0.2s ease;
   border: 1px solid transparent;
   outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px; /* Touch target safety */
 }
 
 .btn-primary {
@@ -147,6 +153,7 @@ input, select, textarea {
   font-family: var(--font-sans);
   outline: none;
   transition: border-color 0.2s ease;
+  font-size: 14px;
 }
 input:focus, select:focus, textarea:focus {
   border-color: var(--accent-purple);
@@ -168,8 +175,8 @@ input:focus, select:focus, textarea:focus {
   gap: 6px;
   padding: 4px 8px;
   border-radius: 9999px;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -188,7 +195,7 @@ input:focus, select:focus, textarea:focus {
 .main-layout {
   display: grid;
   grid-template-columns: 320px 1fr;
-  min-height: calc(100vh - 64px);
+  min-height: calc(100vh - 64px - 56px); /* offsets for navbar and bottom nav */
 }
 
 @media (max-width: 1024px) {
@@ -199,11 +206,19 @@ input:focus, select:focus, textarea:focus {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
 }
 
-/* Simulator elements */
+/* Simulator elements with scale safety container */
+.android-sim-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  overflow: hidden;
+}
+
 .android-sim-device {
   width: 320px;
   height: 640px;
@@ -215,11 +230,20 @@ input:focus, select:focus, textarea:focus {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  transform-origin: center center;
+}
+
+@media (max-width: 360px) {
+  .android-sim-device {
+    /* Scale down dynamically for very narrow viewports */
+    transform: scale(0.85);
+    margin: -40px 0;
+  }
 }
 
 .android-sim-screen {
   flex: 1;
-  background: #f0f0f0; /* matches settings screenshot */
+  background: #f0f0f0; 
   color: #333;
   overflow-y: auto;
   position: relative;
@@ -272,7 +296,7 @@ input:focus, select:focus, textarea:focus {
 
 .terminal-body {
   padding: 16px;
-  height: 350px;
+  height: 320px;
   overflow-y: auto;
   color: #22c55e;
   font-size: 13px;
@@ -310,7 +334,7 @@ input:focus, select:focus, textarea:focus {
 /* Navigation layout */
 .navbar {
   height: 64px;
-  background: rgba(18, 18, 28, 0.8);
+  background: rgba(18, 18, 28, 0.85);
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
@@ -325,23 +349,81 @@ input:focus, select:focus, textarea:focus {
 
 .nav-links {
   display: flex;
-  gap: 16px;
+  gap: 12px;
 }
 
 .nav-item {
   color: var(--text-secondary);
   text-decoration: none;
-  padding: 8px 12px;
+  padding: 8px 14px;
   border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
   transition: all 0.2s ease;
+  min-height: auto;
 }
 
 .nav-item:hover, .nav-item.active {
   color: var(--text-primary);
   background: var(--panel-hover);
   border-bottom: 2px solid var(--accent-purple);
+}
+
+/* Mobile Bottom Navigation */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: rgba(18, 18, 28, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border-color);
+  z-index: 100;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 8px;
+}
+
+.mobile-bottom-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 10px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  min-height: auto;
+  flex: 1;
+}
+.mobile-bottom-item.active {
+  color: var(--accent-purple);
+}
+.mobile-bottom-icon {
+  font-size: 20px;
+}
+
+/* Responsive Table Card utilities */
+.mobile-card-grid {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mobile-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 /* Animations */
@@ -351,4 +433,29 @@ input:focus, select:focus, textarea:focus {
 }
 .glow-pulse {
   animation: pulse-glow 2s infinite;
+}
+
+/* Responsiveness Media Queries */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none; /* Hide top nav links on mobile */
+  }
+
+  .mobile-bottom-nav {
+    display: flex; /* Show bottom nav on mobile */
+  }
+
+  /* Force tables to hide and show card fallbacks */
+  table {
+    display: none !important;
+  }
+  
+  .mobile-card-grid {
+    display: flex;
+  }
+
+  /* Padding adjustments */
+  body {
+    padding-bottom: 60px; /* leaves room for bottom nav */
+  }
 }

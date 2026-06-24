@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { StorageService } from './services/storage';
 import type { Bot, ActionLog } from './types';
-
 import { Dashboard } from './components/Dashboard';
 import { DeviceList } from './components/DeviceList';
 import { ActionPanel } from './components/ActionPanel';
@@ -17,6 +16,16 @@ function App() {
   // State from storage
   const [bots, setBots] = useState<Bot[]>([]);
   const [logs, setLogs] = useState<ActionLog[]>([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  // Monitor screen size changes
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Initialize and subscribe to state updates
   useEffect(() => {
@@ -122,36 +131,40 @@ function App() {
 
         {activeTab === 'bots' && (
           <div className="main-layout" style={{ flex: 1 }}>
-            {/* Sidebar list */}
-            <DeviceList 
-              bots={bots} 
-              selectedBotId={selectedBotId} 
-              onSelectBot={handleSelectBot} 
-            />
+            {/* Sidebar list (hidden on mobile if a bot is active) */}
+            {(!isMobile || !selectedBotId) && (
+              <DeviceList 
+                bots={bots} 
+                selectedBotId={selectedBotId} 
+                onSelectBot={handleSelectBot} 
+              />
+            )}
             
-            {/* Action control details */}
-            <div style={{ overflowY: 'auto' }}>
-              {activeBot ? (
-                <ActionPanel bot={activeBot} onClose={handleCloseBotPanel} />
-              ) : (
-                <div style={{ 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  height: '100%', 
-                  padding: '40px',
-                  color: 'var(--text-muted)',
-                  textAlign: 'center'
-                }}>
-                  <span style={{ fontSize: '48px', marginBottom: '16px' }}>📱</span>
-                  <h3>Nenhum dispositivo selecionado</h3>
-                  <p style={{ fontSize: '14px', maxWidth: '300px', marginTop: '8px' }}>
-                    Selecione um aparelho na barra lateral esquerda para visualizar a tela, logs do keylogger e enviar comandos.
-                  </p>
-                </div>
-              )}
-            </div>
+            {/* Action control details (hidden on mobile if no bot is active) */}
+            {(!isMobile || selectedBotId) && (
+              <div style={{ overflowY: 'auto' }}>
+                {activeBot ? (
+                  <ActionPanel bot={activeBot} onClose={handleCloseBotPanel} />
+                ) : (
+                  <div style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    height: '100%', 
+                    padding: '40px',
+                    color: 'var(--text-muted)',
+                    textAlign: 'center'
+                  }}>
+                    <span style={{ fontSize: '48px', marginBottom: '16px' }}>📱</span>
+                    <h3>Nenhum dispositivo selecionado</h3>
+                    <p style={{ fontSize: '14px', maxWidth: '300px', marginTop: '8px' }}>
+                      Selecione um aparelho na barra lateral esquerda para visualizar a tela, logs do keylogger e enviar comandos.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 
@@ -164,21 +177,58 @@ function App() {
         )}
       </main>
 
+      {/* Mobile Bottom Navigation Bar */}
+      <div className="mobile-bottom-nav">
+        <button 
+          className={`mobile-bottom-item ${activeTab === 'dashboard' ? 'active' : ''}`}
+          onClick={() => { setActiveTab('dashboard'); setSelectedBotId(null); }}
+        >
+          <span className="mobile-bottom-icon">📊</span>
+          Dashboard
+        </button>
+        <button 
+          className={`mobile-bottom-item ${activeTab === 'bots' ? 'active' : ''}`}
+          onClick={() => setActiveTab('bots')}
+        >
+          <span className="mobile-bottom-icon">📱</span>
+          Dispositivos
+        </button>
+        <button 
+          className={`mobile-bottom-item ${activeTab === 'map' ? 'active' : ''}`}
+          onClick={() => { setActiveTab('map'); setSelectedBotId(null); }}
+        >
+          <span className="mobile-bottom-icon">🗺️</span>
+          Live Map
+        </button>
+        <button 
+          className={`mobile-bottom-item ${activeTab === 'builder' ? 'active' : ''}`}
+          onClick={() => { setActiveTab('builder'); setSelectedBotId(null); }}
+        >
+          <span className="mobile-bottom-icon">🛠️</span>
+          Compilador
+        </button>
+      </div>
+
       {/* Footer information panel */}
       <footer style={{ 
         height: '40px', 
         background: 'rgba(9, 9, 14, 0.95)', 
         borderTop: '1px solid var(--border-color)', 
-        display: 'flex', 
+        display: 'none', // hidden on mobile, desktop handled differently
         alignItems: 'center', 
         justifyContent: 'space-between', 
         padding: '0 24px',
         fontSize: '11px',
         color: 'var(--text-muted)'
-      }}>
+      }} className="desktop-footer">
         <span>BTMob V4 Web Control Panel • Refatorado com React & TypeScript</span>
         <span>Status da Conexão: Simulado (127.0.0.1)</span>
       </footer>
+      <style>{`
+        @media (min-width: 769px) {
+          .desktop-footer { display: flex !important; }
+        }
+      `}</style>
     </>
   );
 }
